@@ -7,3 +7,5 @@ w3c_validator.py
 audio/
 object_loader.py
 data/
+.vscode
+client_proto/
