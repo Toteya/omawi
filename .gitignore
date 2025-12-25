@@ -9,3 +9,4 @@ object_loader.py
 data/
 .vscode
 client_proto/
+server/media/
