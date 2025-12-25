@@ -30,6 +30,15 @@ export async function getSongMelody(songId) {
   return melodies?.[0]?.filepath
 }
 
+export async function getMelodyMedia(filepath) {
+  const res = await fetch(`${API_BASE}/melodies/media/${filepath}`)
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    throw new Error(`Request failed: ${res.status} ${text}`)
+  }
+  return res
+}
+
 export async function getSongLyrics(songId) {
   return request(`/songs/${songId}/verses`)
 }

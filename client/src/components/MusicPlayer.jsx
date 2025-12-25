@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { getSongMelody } from '../api/requests'
-
-const AUDIO_BASE = import.meta.env.VITE_AUDIO_BASE_URL ?? 'http://127.0.0.1:5001/api/v1/melodies/media'
+import { getSongMelody, getMelodyMedia } from '../api/requests'
 
 export default function MusicPlayer({ selectedSong }) {
   const audioContextRef = useRef(null)
@@ -58,13 +56,15 @@ export default function MusicPlayer({ selectedSong }) {
       return
     }
     const urls = [
-      `${AUDIO_BASE}/${path}/soprano.m4a`,
-      `${AUDIO_BASE}/${path}/alto.m4a`,
-      `${AUDIO_BASE}/${path}/tenor.m4a`,
-      `${AUDIO_BASE}/${path}/bass.m4a`,
+      `${path}/soprano.m4a`,
+      `${path}/alto.m4a`,
+      `${path}/tenor.m4a`,
+      `${path}/bass.m4a`,
     ]
     const dataBuffers = await Promise.all(
-      urls.map((u) => fetch(u).then((res) => res.arrayBuffer()))
+      urls.map((u) => getMelodyMedia(u)
+        .then((res) => res.arrayBuffer())
+      )
     )
     buffersRef.current = await Promise.all(
       dataBuffers.map((buf) => ctx.decodeAudioData(buf))
