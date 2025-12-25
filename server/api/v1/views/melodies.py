@@ -3,13 +3,18 @@
 module melodies:
 Contains API endpoints related to melody objects
 """
-from flask import abort, jsonify, request
+from flask import abort, jsonify, request, send_file
 from sqlalchemy.exc import IntegrityError
+import os
 from api.v1.views import app_views
 from models import storage
 from models.composer import Composer
 from models.melody import Melody
 from models.song import Song
+from werkzeug.utils import secure_filename
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MEDIA_ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, '../../../', 'media', 'audio'))
 
 
 @app_views.route('/melodies', methods=['GET'], strict_slashes=False)
@@ -19,6 +24,23 @@ def get_melodies():
     melodies = storage.all(Melody).values()
     melodies_list = [melody.to_dict() for melody in melodies]
     return jsonify(melodies_list)
+
+
+@app_views.route('/melodies/media/<path:filepath>', methods=['GET'], strict_slashes=False)
+def get_melody_media(filepath):
+    """ Returns the melody file at the given filepath
+    """
+    # filename = secure_filename(os.path.basename(target_path))
+    full_path = os.path.abspath(os.path.join(MEDIA_ROOT_DIR, filepath))
+    print("FULL PATH:", full_path)
+    print("MEDIA ROOT:", MEDIA_ROOT_DIR)
+    if not full_path.startswith(MEDIA_ROOT_DIR):
+        abort(403, description='Access to the requested file is forbidden')
+    if not os.path.isfile(full_path):
+        abort(404, description='File not found')
+
+    return send_file(full_path)
+
 
 
 @app_views.route('/melodies/<melody_id>', methods=['GET'], strict_slashes=False)
@@ -64,11 +86,10 @@ def get_song_melodies(song_id):
     """
     song = storage.get(Song, song_id)
     if not song:
-        abort(404)
+        abort(404, description='Song not found')
 
     melodies = [melody.to_dict() for melody in song.melodies]
     return jsonify(melodies)
-
 
 
 @app_views.route('/songs/<song_id>/melodies/<melody_id>', methods=['PUT'],
