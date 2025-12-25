@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { getSongMelody } from '../api/requests'
 
-const AUDIO_BASE = import.meta.env.VITE_AUDIO_BASE_URL ?? 'http://127.0.0.1:5001/static/assets/audio'
+const AUDIO_BASE = import.meta.env.VITE_AUDIO_BASE_URL ?? 'http://127.0.0.1:5001/api/v1/melodies/media'
 
 export default function MusicPlayer({ selectedSong }) {
   const audioContextRef = useRef(null)
