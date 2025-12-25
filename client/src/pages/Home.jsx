@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getComposers, getSongs } from '../api/requests'
+import { getComposers, getSongs, getSongLyrics } from '../api/requests'
 import MusicPlayer from '../components/MusicPlayer'
 
 export default function Home() {
@@ -8,6 +8,8 @@ export default function Home() {
   const [composers, setComposers] = useState([])
   const [composerId, setComposerId] = useState('')
   const [query, setQuery] = useState('')
+  const [selectedSong, setSelectedSong] = useState(null)
+  const [lyrics, setLyrics] = useState([])
 
   useEffect(() => {
     getComposers().then(setComposers).catch(() => {})
@@ -17,6 +19,14 @@ export default function Home() {
     getSongs(composerId).then(setSongs).catch(() => {})
     // TO DO: handle errors; loading state indicator
   }, [composerId])
+  
+  useEffect(() => {
+    if (!selectedSong) {
+      setLyrics([])
+      return
+    }
+    getSongLyrics(selectedSong.id).then(setLyrics).catch(() => setLyrics([]))
+  }, [selectedSong])
   
   const visibleSongs = songs.filter((s) =>
     (s.title ?? '').toLowerCase().includes(query.toLowerCase())
@@ -70,7 +80,14 @@ export default function Home() {
             {visibleSongs.length > 0 ? (
               visibleSongs.map((song) => (
                 <li key={song.id}>
-                  <a href="#" className="block px-2 py-1 rounded hover:bg-gray-100">
+                  <a
+                    href="#"
+                    className="block px-2 py-1 rounded hover:bg-gray-100"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      setSelectedSong(song)
+                    }}
+                  >
                     {song.title}
                   </a>
                 </li>
@@ -83,9 +100,23 @@ export default function Home() {
           </ul>
         </aside>
         <main className="flex-1">
-          <MusicPlayer />
+          <MusicPlayer selectedSong={selectedSong} />
           <div className="mt-6">
-            <div className="border rounded-lg p-4 min-h-24">Lyrics</div>
+            <div className="border rounded-lg p-4 min-h-24">
+              {lyrics.length > 0 ? (
+                lyrics.map((verse) => (
+                  <div key={verse.id} className="mb-2">
+                    <h4 className="font-semibold">{verse.number}.</h4>
+                    <p>{verse.lyrics}</p>
+                  </div>
+                ))
+              ) : (
+                <div>
+                  <p><em>Lyrics currently unavailable for this song.</em></p>
+                  <p><em>Please try again later.</em></p>
+                </div>
+              )}
+            </div>
           </div>
         </main>
       </div>
