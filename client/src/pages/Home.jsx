@@ -7,6 +7,7 @@ export default function Home() {
   const [songs, setSongs] = useState([])
   const [composers, setComposers] = useState([])
   const [composerId, setComposerId] = useState('')
+  const [query, setQuery] = useState('')
 
   useEffect(() => {
     getComposers().then(setComposers).catch(() => {})
@@ -17,9 +18,13 @@ export default function Home() {
     // TO DO: handle errors; loading state indicator
   }, [composerId])
   
+  const visibleSongs = songs.filter((s) =>
+    (s.title ?? '').toLowerCase().includes(query.toLowerCase())
+  )
+
   return (
     <div className="Page space-y-6">
-      <div className="flex items-center gap-4 relative z-50">
+      <div className="Searchbar flex items-center gap-4 relative z-50">
         <button
           className="BurgerButton md:hidden border rounded px-3 py-2"
           aria-label="Toggle menu"
@@ -29,9 +34,11 @@ export default function Home() {
           ☰
         </button>
         <input
-          type="text"
+          type="search"
           placeholder="Search songs"
           className="border rounded-md px-3 py-2 w-full max-w-sm"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
         />
         <select
           className="border rounded-md px-3 py-2"
@@ -60,8 +67,8 @@ export default function Home() {
               if (e.target.closest('a')) setShowMenu(false)
             }}
           >
-            {songs.length > 0 ? (
-              songs.map((song) => (
+            {visibleSongs.length > 0 ? (
+              visibleSongs.map((song) => (
                 <li key={song.id}>
                   <a href="#" className="block px-2 py-1 rounded hover:bg-gray-100">
                     {song.title}
