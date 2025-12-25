@@ -19,7 +19,7 @@ export default function Home() {
   
   return (
     <div className="Page space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 relative z-50">
         <button
           className="BurgerButton md:hidden border rounded px-3 py-2"
           aria-label="Toggle menu"
