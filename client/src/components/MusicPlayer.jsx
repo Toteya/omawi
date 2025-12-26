@@ -63,7 +63,7 @@ export default function MusicPlayer({ selectedSong }) {
     ]
     const dataBuffers = await Promise.all(
       urls.map((u) => getMelodyMedia(u)
-        .then((res) => res.arrayBuffer())
+        .then((res) => res.arrayBuffer()) // convert response to raw binary
       )
     )
     buffersRef.current = await Promise.all(
