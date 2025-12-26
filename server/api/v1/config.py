@@ -3,7 +3,10 @@
 module config:
 Flask configuration file
 """
+import os
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+AUDIO_ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, '../../', 'media', 'audio'))
 
 class Config:
     TESTING = False

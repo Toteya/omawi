@@ -7,14 +7,12 @@ from flask import abort, jsonify, request, send_file
 from sqlalchemy.exc import IntegrityError
 import os
 from api.v1.views import app_views
+from api.v1.config import AUDIO_ROOT_DIR
 from models import storage
 from models.composer import Composer
 from models.melody import Melody
 from models.song import Song
-from werkzeug.utils import secure_filename
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MEDIA_ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, '../../../', 'media', 'audio'))
+# from werkzeug.utils import secure_filename
 
 
 @app_views.route('/melodies', methods=['GET'], strict_slashes=False)
@@ -31,10 +29,8 @@ def get_melody_media(filepath):
     """ Returns the melody file at the given filepath
     """
     # filename = secure_filename(os.path.basename(target_path))
-    full_path = os.path.abspath(os.path.join(MEDIA_ROOT_DIR, filepath))
-    print("FULL PATH:", full_path)
-    print("MEDIA ROOT:", MEDIA_ROOT_DIR)
-    if not full_path.startswith(MEDIA_ROOT_DIR):
+    full_path = os.path.abspath(os.path.join(AUDIO_ROOT_DIR, filepath))
+    if not full_path.startswith(AUDIO_ROOT_DIR):
         abort(403, description='Access to the requested file is forbidden')
     if not os.path.isfile(full_path):
         abort(404, description='File not found')
