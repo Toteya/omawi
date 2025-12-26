@@ -101,8 +101,10 @@ export default function MusicPlayer({ selectedSong }) {
       sourcesRef.current.push(src)
       src.start(now + 0.2, offsetTimeRef.current)
     })
-    isPlayingRef.current = true
-    setIsPlaying(true)
+    if (ctx.state === 'running') {
+      isPlayingRef.current = true
+      setIsPlaying(true)
+    }
     rafRef.current = requestAnimationFrame(updateProgress)
   }
 
@@ -148,6 +150,11 @@ export default function MusicPlayer({ selectedSong }) {
   }
 
   function onSeek(e) {
+    const ctx = audioContextRef.current
+    if (ctx?.state === 'running' && !isPlayingRef.current) {
+      // prevent autoplay after seeking when song hasn't started
+      ctx.suspend()
+    }
     const progress = Number(e.target.value)
     if (buffersRef.current.length === 0) return
     offsetTimeRef.current = (duration * progress) / 100
