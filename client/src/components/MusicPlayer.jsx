@@ -16,6 +16,11 @@ export default function MusicPlayer({ selectedSong }) {
   const [currentTime, setCurrentTime] = useState(0)
   const [volume, setVolume] = useState(1)
 
+  const [sopranoMuted, setSopranoMuted] = useState(false)
+  const [altoMuted, setAltoMuted] = useState(false)
+  const [tenorMuted, setTenorMuted] = useState(false)
+  const [bassMuted, setBassMuted] = useState(false)
+
   async function ensureAudioContext() {
     if (!audioContextRef.current) {
       const Ctx = window.AudioContext || window.webkitAudioContext
@@ -170,14 +175,22 @@ export default function MusicPlayer({ selectedSong }) {
   function muteTrack(index, muted) {
     const g = gainNodesRef.current[index]
     if (!g) return
-    g.gain.value = muted ? 0 : volume
+    g.gain.value = !muted ? 0 : volume
   }
 
   function muteAll() {
     gainNodesRef.current.forEach((g) => { g.gain.value = 0 })
+    setSopranoMuted(true)
+    setAltoMuted(true)
+    setTenorMuted(true)
+    setBassMuted(true)
   }
   function unmuteAll() {
     gainNodesRef.current.forEach((g) => { g.gain.value = volume })
+    setSopranoMuted(false)
+    setAltoMuted(false)
+    setTenorMuted(false)
+    setBassMuted(false)
   }
 
   useEffect(() => {
@@ -233,10 +246,34 @@ export default function MusicPlayer({ selectedSong }) {
       <div className="flex flex-wrap gap-2">
         <button className="border rounded px-3 py-1" onClick={muteAll}>Mute All</button>
         <button className="border rounded px-3 py-1" onClick={unmuteAll}>Unmute All</button>
-        <button className="border rounded px-3 py-1" onClick={() => muteTrack(0, true)}>Soprano</button>
-        <button className="border rounded px-3 py-1" onClick={() => muteTrack(1, true)}>Alto</button>
-        <button className="border rounded px-3 py-1" onClick={() => muteTrack(2, true)}>Tenor</button>
-        <button className="border rounded px-3 py-1" onClick={() => muteTrack(3, true)}>Bass</button>
+        <button
+          className="border rounded px-3 py-1"
+          onClick={() => {
+            muteTrack(0, sopranoMuted)
+            setSopranoMuted(!sopranoMuted)
+          }}
+        >Soprano</button>
+        <button
+          className="border rounded px-3 py-1"
+          onClick={() => {
+            muteTrack(1, altoMuted)
+            setAltoMuted(!altoMuted)
+          }}
+        >Alto</button>
+        <button
+          className="border rounded px-3 py-1"
+          onClick={() => {
+            muteTrack(2, tenorMuted)
+            setTenorMuted(!tenorMuted)
+          }}
+        >Tenor</button>
+        <button
+          className="border rounded px-3 py-1"
+          onClick={() => {
+            muteTrack(3, bassMuted)
+            setBassMuted(!bassMuted)
+          }}
+        >Bass</button>
       </div>
     </div>
   )
