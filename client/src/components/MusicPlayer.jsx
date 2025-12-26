@@ -9,6 +9,7 @@ export default function MusicPlayer({ selectedSong }) {
   const startTimeRef = useRef(0)
   const offsetTimeRef = useRef(0)
   const rafRef = useRef(null)
+  const isPlayingRef = useRef(false)
 
   const [isPlaying, setIsPlaying] = useState(false)
   const [duration, setDuration] = useState(0)
@@ -32,6 +33,7 @@ export default function MusicPlayer({ selectedSong }) {
       try { s.stop() } catch {}
     })
     sourcesRef.current = []
+    isPlayingRef.current = false
     setIsPlaying(false)
     cancelAnimationFrame(rafRef.current)
   }
@@ -79,6 +81,7 @@ export default function MusicPlayer({ selectedSong }) {
     const ctx = audioContextRef.current
     if (!ctx || buffersRef.current.length === 0) return
     const now = ctx.currentTime
+    console.log("NOW:", now)
     startTimeRef.current = now
     sourcesRef.current = []
     buffersRef.current.forEach((buf, index) => {
@@ -89,6 +92,7 @@ export default function MusicPlayer({ selectedSong }) {
       src.onended = () => {
         sourcesRef.current = sourcesRef.current.filter((s) => s !== src)
         if (sourcesRef.current.length === 0) {
+          isPlayingRef.current = false
           setIsPlaying(false)
           setCurrentTime(0)
         }
@@ -96,6 +100,7 @@ export default function MusicPlayer({ selectedSong }) {
       sourcesRef.current.push(src)
       src.start(now + 0.2, offsetTimeRef.current)
     })
+    isPlayingRef.current = true
     setIsPlaying(true)
     rafRef.current = requestAnimationFrame(updateProgress)
   }
@@ -106,7 +111,8 @@ export default function MusicPlayer({ selectedSong }) {
     let t = ctx.currentTime - startTimeRef.current + offsetTimeRef.current
     if (t < 0) t = 0
     setCurrentTime(t)
-    if (isPlaying) {
+    console.log("CURRENT TIME:", t)
+    if (isPlayingRef.current) {
       rafRef.current = requestAnimationFrame(updateProgress)
     }
   }
@@ -124,9 +130,13 @@ export default function MusicPlayer({ selectedSong }) {
       return
     }
     if (ctx.state === 'running') {
-      ctx.suspend().then(() => setIsPlaying(false))
+      ctx.suspend().then(() => {
+        isPlayingRef.current = false
+        setIsPlaying(false)
+      })
     } else if (ctx.state === 'suspended') {
       ctx.resume().then(() => {
+        isPlayingRef.current = true
         setIsPlaying(true)
         rafRef.current = requestAnimationFrame(updateProgress)
       })
