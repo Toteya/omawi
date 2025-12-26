@@ -81,7 +81,6 @@ export default function MusicPlayer({ selectedSong }) {
     const ctx = audioContextRef.current
     if (!ctx || buffersRef.current.length === 0) return
     const now = ctx.currentTime
-    console.log("NOW:", now)
     startTimeRef.current = now
     sourcesRef.current = []
     buffersRef.current.forEach((buf, index) => {
@@ -95,6 +94,8 @@ export default function MusicPlayer({ selectedSong }) {
           isPlayingRef.current = false
           setIsPlaying(false)
           setCurrentTime(0)
+          offsetTimeRef.current = 0
+          cancelAnimationFrame(rafRef.current)
         }
       }
       sourcesRef.current.push(src)
@@ -114,6 +115,7 @@ export default function MusicPlayer({ selectedSong }) {
 
     const roundedTime = Math.floor(t * 20) / 20  // minimise frame updates to improve performance
     setCurrentTime(roundedTime)
+
     if (isPlayingRef.current) {
       rafRef.current = requestAnimationFrame(updateProgress)
     }
@@ -148,8 +150,7 @@ export default function MusicPlayer({ selectedSong }) {
   function onSeek(e) {
     const progress = Number(e.target.value)
     if (buffersRef.current.length === 0) return
-    const d = buffersRef.current[0].duration
-    offsetTimeRef.current = (d * progress) / 100
+    offsetTimeRef.current = (duration * progress) / 100
     stopSources()
     startPlayback()
   }
@@ -186,6 +187,7 @@ export default function MusicPlayer({ selectedSong }) {
   const currentSeconds = Math.floor(currentTime % 60)
   const totalMinutes = Math.floor(duration / 60)
   const totalSeconds = Math.floor(duration % 60)
+  const progress = duration > 0 ? (currentTime / duration) * 100 : 0
 
   return (
     <div className="MusicPlayer border rounded-lg p-4">
@@ -212,7 +214,7 @@ export default function MusicPlayer({ selectedSong }) {
           min="0"
           max="100"
           step="0.01"
-          defaultValue="0"
+          value={progress}
           className="w-full"
           onChange={onSeek}
         />
