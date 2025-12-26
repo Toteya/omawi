@@ -108,10 +108,12 @@ export default function MusicPlayer({ selectedSong }) {
   function updateProgress() {
     const ctx = audioContextRef.current
     if (!ctx) return
+
     let t = ctx.currentTime - startTimeRef.current + offsetTimeRef.current
     if (t < 0) t = 0
-    setCurrentTime(t)
-    console.log("CURRENT TIME:", t)
+
+    const roundedTime = Math.floor(t * 20) / 20  // minimise frame updates to improve performance
+    setCurrentTime(roundedTime)
     if (isPlayingRef.current) {
       rafRef.current = requestAnimationFrame(updateProgress)
     }
