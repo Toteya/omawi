@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { getSongMelody, getMelodyMedia } from '../api/requests'
+import { FaPlay, FaPause, FaVolumeHigh, FaVolumeXmark } from 'react-icons/fa6'
 
 export default function MusicPlayer({ selectedSong }) {
   const audioContextRef = useRef(null)
@@ -213,11 +214,11 @@ export default function MusicPlayer({ selectedSong }) {
     <div className="MusicPlayer border rounded-lg p-4">
       <p className="mb-4">{selectedSong ? selectedSong.title : 'Select a song to hear the melody'}</p>
       <div className="flex items-center gap-4 mb-4">
-        <button className="border rounded px-3 py-1" onClick={togglePlayPause}>
-          {isPlaying ? 'Pause' : 'Play'}
+        <button className="border rounded px-3 py-1" onClick={togglePlayPause} aria-label={isPlaying ? 'Pause' : 'Play'}>
+          {isPlaying ? <FaPause /> : <FaPlay />}
         </button>
         <div className="flex items-center gap-2">
-          <span>Volume</span>
+          <span className="inline-flex items-center"><FaVolumeHigh /></span>
           <input
             type="range"
             min="0"
@@ -244,36 +245,36 @@ export default function MusicPlayer({ selectedSong }) {
         </div>
       </div>
       <div className="flex flex-wrap gap-2">
-        <button className="border rounded px-3 py-1" onClick={muteAll}>Mute All</button>
-        <button className="border rounded px-3 py-1" onClick={unmuteAll}>Unmute All</button>
+        <button className="border rounded px-3 py-1" onClick={muteAll} aria-label="Mute All"><FaVolumeXmark /></button>
+        <button className="border rounded px-3 py-1" onClick={unmuteAll} aria-label="Unmute All"><FaVolumeHigh /></button>
         <button
-          className="border rounded px-3 py-1"
+          className="border rounded px-3 py-1 inline-flex items-center gap-2"
           onClick={() => {
             muteTrack(0, sopranoMuted)
             setSopranoMuted(!sopranoMuted)
           }}
-        >Soprano</button>
+        >{sopranoMuted ? <FaVolumeXmark className="text-red-500"/> : <FaVolumeHigh />} <span>Soprano</span></button>
         <button
-          className="border rounded px-3 py-1"
+          className="border rounded px-3 py-1 inline-flex items-center gap-2"
           onClick={() => {
             muteTrack(1, altoMuted)
             setAltoMuted(!altoMuted)
           }}
-        >Alto</button>
+        >{altoMuted ? <FaVolumeXmark className="text-red-500"/> : <FaVolumeHigh />} <span>Alto</span></button>
         <button
-          className="border rounded px-3 py-1"
+          className="border rounded px-3 py-1 inline-flex items-center gap-2"
           onClick={() => {
             muteTrack(2, tenorMuted)
             setTenorMuted(!tenorMuted)
           }}
-        >Tenor</button>
+        >{tenorMuted ? <FaVolumeXmark className="text-red-500"/> : <FaVolumeHigh />} <span>Tenor</span></button>
         <button
-          className="border rounded px-3 py-1"
+          className="border rounded px-3 py-1 inline-flex items-center gap-2"
           onClick={() => {
             muteTrack(3, bassMuted)
             setBassMuted(!bassMuted)
           }}
-        >Bass</button>
+        >{bassMuted ? <FaVolumeXmark className="text-red-500"/> : <FaVolumeHigh />} <span>Bass</span></button>
       </div>
     </div>
   )
