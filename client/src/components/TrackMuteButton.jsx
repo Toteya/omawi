@@ -1,6 +1,6 @@
 import { FaVolumeXmark, FaVolumeHigh } from "react-icons/fa6"
 
-const TrackMuter = ({muteTrack, trackName, trackIndex, trackMuted, setTrackMuted}) => {
+const TrackMuteButton = ({muteTrack, trackName, trackIndex, trackMuted, setTrackMuted}) => {
   return (
     <button
       className="border rounded px-3 py-1 inline-flex items-center gap-2"
@@ -12,4 +12,4 @@ const TrackMuter = ({muteTrack, trackName, trackIndex, trackMuted, setTrackMuted
   )
 }
 
-export default TrackMuter
+export default TrackMuteButton
