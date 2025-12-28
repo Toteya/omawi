@@ -3,9 +3,11 @@
 module app:
 Contains Flask API implementation
 """
+from api.v1.auth import app_auth
 from api.v1.views import app_views
 from flask import Flask, jsonify
 from flask_cors import CORS, cross_origin
+from flask_login import LoginManager
 from models import storage
 import os
 
@@ -18,7 +20,18 @@ def create_app():
     config_type = os.getenv('CONFIG_TYPE', 'api.v1.config.DevelopmentConfig')
     app.config.from_object(config_type)
 
+    app.register_blueprint(app_auth)    # Auth-related routes
     app.register_blueprint(app_views)
+
+    login_manager = LoginManager()
+    login_manager.login_view = 'app_auth.login'
+    login_manager.init_app(app)
+
+    from models.user import User
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return storage.get(User, user_id)
 
     return app
 
