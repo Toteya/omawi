@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { getSongMelody, getMelodyMedia } from '../api/requests'
 import { FaPlay, FaPause, FaVolumeHigh, FaVolumeXmark } from 'react-icons/fa6'
+import TrackMuteButton from './TrackMuteButton.jsx'
 
 export default function MusicPlayer({ selectedSong }) {
   const audioContextRef = useRef(null)
@@ -247,34 +248,34 @@ export default function MusicPlayer({ selectedSong }) {
       <div className="flex flex-wrap gap-2">
         <button className="border rounded px-3 py-1" onClick={muteAll} aria-label="Mute All"><FaVolumeXmark /></button>
         <button className="border rounded px-3 py-1" onClick={unmuteAll} aria-label="Unmute All"><FaVolumeHigh /></button>
-        <button
-          className="border rounded px-3 py-1 inline-flex items-center gap-2"
-          onClick={() => {
-            muteTrack(0, sopranoMuted)
-            setSopranoMuted(!sopranoMuted)
-          }}
-        >{sopranoMuted ? <FaVolumeXmark className="text-red-500"/> : <FaVolumeHigh />} <span>Soprano</span></button>
-        <button
-          className="border rounded px-3 py-1 inline-flex items-center gap-2"
-          onClick={() => {
-            muteTrack(1, altoMuted)
-            setAltoMuted(!altoMuted)
-          }}
-        >{altoMuted ? <FaVolumeXmark className="text-red-500"/> : <FaVolumeHigh />} <span>Alto</span></button>
-        <button
-          className="border rounded px-3 py-1 inline-flex items-center gap-2"
-          onClick={() => {
-            muteTrack(2, tenorMuted)
-            setTenorMuted(!tenorMuted)
-          }}
-        >{tenorMuted ? <FaVolumeXmark className="text-red-500"/> : <FaVolumeHigh />} <span>Tenor</span></button>
-        <button
-          className="border rounded px-3 py-1 inline-flex items-center gap-2"
-          onClick={() => {
-            muteTrack(3, bassMuted)
-            setBassMuted(!bassMuted)
-          }}
-        >{bassMuted ? <FaVolumeXmark className="text-red-500"/> : <FaVolumeHigh />} <span>Bass</span></button>
+        <TrackMuteButton
+          muteTrack={muteTrack}
+          trackName="Soprano"
+          trackIndex={0}
+          trackMuted={sopranoMuted}
+          setTrackMuted={setSopranoMuted}
+        />
+        <TrackMuteButton
+          muteTrack={muteTrack}
+          trackName="Alto"
+          trackIndex={1}
+          trackMuted={altoMuted}
+          setTrackMuted={setAltoMuted}
+        />
+        <TrackMuteButton
+          muteTrack={muteTrack}
+          trackName="Tenor"
+          trackIndex={2}
+          trackMuted={tenorMuted}
+          setTrackMuted={setTenorMuted}
+        />
+        <TrackMuteButton
+          muteTrack={muteTrack}
+          trackName="Bass"
+          trackIndex={3}
+          trackMuted={bassMuted}
+          setTrackMuted={setBassMuted}
+        />
       </div>
     </div>
   )
