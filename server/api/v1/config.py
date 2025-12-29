@@ -14,6 +14,8 @@ class Config:
     JSONIFY_PRETTYPRINT_REGULAR = True
     HOST = '0.0.0.0'
     PORT = 5001
+    SESSION_COOKIE_SAMESITE = "None"
+    SESSION_COOKIE_SECURE = True
 
 
 class TestingConfig(Config):
