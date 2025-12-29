@@ -16,7 +16,7 @@ export default function Signup() {
       form.get("email"),
       form.get("password"),
     )
-    // navigation.navigate("/")
+    navigation.navigate("/")
   }
 
   return (

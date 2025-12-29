@@ -11,6 +11,7 @@ export default function Login() {
       form.get("password"),
       form.get("remember") === "on",
     )
+    navigation.navigate("/")
   }
   return (
     <div className="Page">
