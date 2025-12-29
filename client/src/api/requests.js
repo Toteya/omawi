@@ -2,6 +2,7 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:5001/api
 
 async function request(path, options) {
   const res = await fetch(`${API_BASE}${path}`, {
+    credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
     ...options,
   })
@@ -41,4 +42,28 @@ export async function getMelodyMedia(filepath) {
 
 export async function getSongLyrics(songId) {
   return request(`/songs/${songId}/verses`)
+}
+
+export async function loginUser(email, password) {
+  return request('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  })
+}
+
+export async function getCurrentUser() {
+  return request('/auth/me')
+}
+
+export async function signupUser(email, name, password) {
+  return request('/auth/signup', {
+    method: 'POST',
+    body: JSON.stringify({ email, name, password }),
+  })
+}
+
+export async function logoutUser() {
+  return request('/auth/logout', {
+    method: 'POST',
+  })
 }
