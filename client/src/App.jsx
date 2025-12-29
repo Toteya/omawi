@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider, useAuth } from './context/AuthContext.jsx'
 import Home from './pages/Home.jsx'
 import Profile from './pages/Profile.jsx'
 import Login from './pages/Login.jsx'
@@ -8,19 +9,40 @@ import Navbar from './components/Navbar.jsx'
 import PageWrapper from './layouts/PageWrapper.jsx'
 import './App.css'
 
+function ProtectedRoute({ children }) {
+  const { status } = useAuth()
+  if (status === 'loading') {
+    return <div>Loading...</div>
+  }
+  if (status === 'unauthenticated') {
+    return <Navigate to='/login' />
+  }
+  return children
+}
+
 function App() {
+  
   return (
     <>
-      <Navbar />
-      <PageWrapper>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/about" element={<About />} />
-        </Routes>
-      </PageWrapper>
+      <AuthProvider>
+        <Navbar />
+        <PageWrapper>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/about" element={<About />} />
+          </Routes>
+        </PageWrapper>
+      </AuthProvider>
     </>
   )
 }
