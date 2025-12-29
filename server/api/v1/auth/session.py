@@ -7,16 +7,11 @@ respectively
 from api.v1.auth import app_auth
 from flask import abort, jsonify, request
 from flask_login import current_user, login_user, login_required, logout_user
+# from email_validators import validate_email, EmailNotValidError
+# import validators  # for email validation
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import storage
 from models.user import User
-
-@app_auth.context_processor
-def inject_user():
-    values = {
-        'isLoggedIn': current_user.is_authenticated
-    }
-    return values
 
 
 @app_auth.route('/me', methods=['GET'])
@@ -32,7 +27,7 @@ def get_current_user():
         "name": current_user.name
     }
 
-    return jsonify({"user": user}), 200
+    return jsonify(user), 200
 
 
 @app_auth.route('/login', methods=['POST'])
@@ -76,6 +71,8 @@ def signup():
     password = data.get('password')
     if not email or not name or not password:
         abort(400, description="Email, name, and password are required.")
+    # if not validators.email(email):
+    #     abort(400, description="Invalid email format.")
 
     user = storage.get_by_filter(User, email=email)
 
