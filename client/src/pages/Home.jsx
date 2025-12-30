@@ -102,19 +102,23 @@ export default function Home() {
         <main className="flex-1">
           <MusicPlayer selectedSong={selectedSong} />
           <div className="mt-6">
-            <div className="border rounded-lg p-4 min-h-24">
-              {lyrics.length > 0 ? (
-                lyrics.map((verse) => (
-                  <div key={verse.id} className="mb-2">
-                    <h4 className="font-semibold">{verse.number}.</h4>
-                    <p>{verse.lyrics}</p>
-                  </div>
-                ))
+            <div className="bg-white border rounded-lg p-4 min-h-24">
+              {!selectedSong ? (
+                <p><em>-- Lyrics --</em></p>
               ) : (
-                <div>
-                  <p><em>Lyrics currently unavailable for this song.</em></p>
-                  <p><em>Please try again later.</em></p>
-                </div>
+                lyrics.length > 0 ? (
+                  lyrics.map((verse) => (
+                    <div key={verse.id} className="mb-2">
+                      <h4 className="font-semibold">{verse.number}.</h4>
+                      <p>{verse.lyrics}</p>
+                    </div>
+                  ))
+                ) : (
+                  <div>
+                    <p><em>Lyrics currently unavailable for this song.</em></p>
+                    <p><em>Please try again later.</em></p>
+                  </div>
+                )
               )}
             </div>
           </div>
