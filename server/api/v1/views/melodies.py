@@ -83,6 +83,9 @@ def get_song_melodies(song_id):
     song = storage.get(Song, song_id)
     if not song:
         abort(404, description='Song not found')
+    
+    if not song.melodies:
+        abort(404, description='No melodies found for this song')
 
     melodies = [melody.to_dict() for melody in song.melodies]
     return jsonify(melodies)
