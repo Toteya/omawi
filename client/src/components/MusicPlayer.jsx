@@ -17,6 +17,7 @@ export default function MusicPlayer({ selectedSong }) {
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [volume, setVolume] = useState(1)
+  const [melodyError, setMelodyError] = useState(false)
 
   const [sopranoMuted, setSopranoMuted] = useState(false)
   const [altoMuted, setAltoMuted] = useState(false)
@@ -196,7 +197,10 @@ export default function MusicPlayer({ selectedSong }) {
   }
 
   useEffect(() => {
-    loadSong(selectedSong).catch(() => {})
+    loadSong(selectedSong).catch(() => {
+      setMelodyError(true)
+    })
+    setMelodyError(false)
     // cleanup on unmount
     return () => {
       stopSources()
@@ -212,9 +216,10 @@ export default function MusicPlayer({ selectedSong }) {
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0
 
   return (
-    <div className="MusicPlayer border rounded-lg p-4">
-      <p className="mb-4">{selectedSong ? selectedSong.title : 'Select a song to hear the melody'}</p>
-      <div className="flex items-center gap-4 mb-4">
+    <div className="MusicPlayer bg-white border rounded-lg p-4">
+      <p className="mb-1">{selectedSong ? selectedSong.title : 'Select a song to hear the melody'}</p>
+      {melodyError && <p className="text-red-500 mb-1 text-xs">Melody currently not available for this song</p>}
+      <div className="flex justify-center gap-4 mb-4 mt-3">
         <button className="border rounded px-3 py-1" onClick={togglePlayPause} aria-label={isPlaying ? 'Pause' : 'Play'}>
           {isPlaying ? <FaPause /> : <FaPlay />}
         </button>
@@ -245,9 +250,23 @@ export default function MusicPlayer({ selectedSong }) {
           <div>{totalMinutes}:{totalSeconds < 10 ? '0' : ''}{totalSeconds}</div>
         </div>
       </div>
-      <div className="flex flex-wrap gap-2">
-        <button className="border rounded px-3 py-1" onClick={muteAll} aria-label="Mute All"><FaVolumeXmark /></button>
-        <button className="border rounded px-3 py-1" onClick={unmuteAll} aria-label="Unmute All"><FaVolumeHigh /></button>
+      <div className="flex flex-wrap justify-center gap-2">
+        <button
+          className="border rounded px-3 py-1 flex flex-col items-center justify-center gap-1"
+          onClick={muteAll}
+          aria-label="Mute All"
+        >
+          <FaVolumeXmark />
+          <span className="text-sm uppercase">All</span>
+        </button>
+        <button
+          className="border rounded mr-4 px-3 py-1 flex flex-col items-center justify-center gap-1"
+          onClick={unmuteAll}
+          aria-label="Unmute All"
+        >
+          <FaVolumeHigh />
+          <span className="text-sm uppercase">All</span>
+        </button>
         <TrackMuteButton
           muteTrack={muteTrack}
           trackName="Soprano"
