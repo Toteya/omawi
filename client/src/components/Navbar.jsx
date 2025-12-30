@@ -1,7 +1,10 @@
 import { NavLink } from 'react-router-dom'
-import '../App.css'
+import { useAuth } from '../context/AuthContext.jsx'
 
 export default function Navbar() {
+  const { status, user, logout } = useAuth()
+  const authenticated = (status === 'authenticated') ? true : false
+  
   return (
     <nav className="Nav">
       <NavLink to="/" className="NavBrand">
@@ -9,8 +12,13 @@ export default function Navbar() {
       </NavLink>
       <div className="NavSpacer" />
       <div className="NavLinks">
-        <NavLink to="/profile">Profile</NavLink>
-        <NavLink to="/login">Login</NavLink>
+        {authenticated && (
+          <>
+            <NavLink to="/profile">Profile</NavLink>
+            <NavLink to="/" onClick={logout}>Logout</NavLink>
+          </>
+        )}
+        {!authenticated && <NavLink to="/login">Login</NavLink>}
         <NavLink to="/about">About</NavLink>
       </div>
     </nav>
