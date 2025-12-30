@@ -77,7 +77,7 @@ def signup():
     user = storage.get_by_filter(User, email=email)
 
     if user:
-        abort(400, description="User already exists.")
+        abort(409, description="User already exists.")
 
     new_user = User(email=email, name=name,
                     password=generate_password_hash(password, method='scrypt'))
