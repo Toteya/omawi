@@ -224,7 +224,9 @@ export default function MusicPlayer({ selectedSong }) {
           {isPlaying ? <FaPause /> : <FaPlay />}
         </button>
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center"><FaVolumeHigh /></span>
+          <span className="inline-flex items-center text-lg">
+            <FaVolumeHigh />
+          </span>
           <input
             type="range"
             min="0"
