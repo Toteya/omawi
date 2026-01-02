@@ -171,11 +171,15 @@ export default function MusicPlayer({ selectedSong }) {
   }
 
   function setMasterVolume(v) {
+    const tracksMuted = [sopranoMuted, altoMuted, tenorMuted, bassMuted]
     setVolume(v)
-    gainNodesRef.current.forEach((g) => { g.gain.value = v })
+    gainNodesRef.current.forEach((g, index) => {
+      if (tracksMuted[index]) return // skip muted tracks
+      g.gain.value = v
+    })
   }
 
-  function muteTrack(index, muted) {
+  function toggleMuteTrack(index, muted) {
     const g = gainNodesRef.current[index]
     if (!g) return
     g.gain.value = !muted ? 0 : volume
@@ -270,28 +274,28 @@ export default function MusicPlayer({ selectedSong }) {
           <span className="text-sm uppercase">All</span>
         </button>
         <TrackMuteButton
-          muteTrack={muteTrack}
+          muteTrack={toggleMuteTrack}
           trackName="Soprano"
           trackIndex={0}
           trackMuted={sopranoMuted}
           setTrackMuted={setSopranoMuted}
         />
         <TrackMuteButton
-          muteTrack={muteTrack}
+          muteTrack={toggleMuteTrack}
           trackName="Alto"
           trackIndex={1}
           trackMuted={altoMuted}
           setTrackMuted={setAltoMuted}
         />
         <TrackMuteButton
-          muteTrack={muteTrack}
+          muteTrack={toggleMuteTrack}
           trackName="Tenor"
           trackIndex={2}
           trackMuted={tenorMuted}
           setTrackMuted={setTenorMuted}
         />
         <TrackMuteButton
-          muteTrack={muteTrack}
+          muteTrack={toggleMuteTrack}
           trackName="Bass"
           trackIndex={3}
           trackMuted={bassMuted}
