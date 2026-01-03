@@ -16,3 +16,4 @@ class User(BaseModel, UserMixin, Base):
     name = Column('name', String(60))
     email = Column('email', String(60), unique=True)
     password = Column('password', String(255))
+    role = Column('role', String(20), default='user')
