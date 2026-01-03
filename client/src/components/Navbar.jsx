@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
-import { CgProfile } from "react-icons/cg";
+import { GrUser, GrUserAdmin } from "react-icons/gr"
 
 export default function Navbar() {
   const { status, user, logout } = useAuth()
@@ -17,7 +17,11 @@ export default function Navbar() {
           <>
             <NavLink to="/profile">
               {user.name}
-              <CgProfile className="inline ml-1 mb-1" size={20} />
+              {user.role === 'admin' ? (
+                <GrUserAdmin className="inline ml-1 mb-1" size={20} />
+              ) : (
+                <GrUser className="inline ml-1 mb-1" size={20} />
+              )}
             </NavLink>
             <NavLink to="/" onClick={logout}>Logout</NavLink>
           </>
