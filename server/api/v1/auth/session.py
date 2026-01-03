@@ -24,7 +24,8 @@ def get_current_user():
     user = {
         "id": current_user.id,
         "email": current_user.email,
-        "name": current_user.name
+        "name": current_user.name,
+        "role": current_user.role
     }
 
     return jsonify(user), 200
@@ -55,7 +56,8 @@ def login():
         "user": {
             "id": user.id,
             "email": user.email,
-            "name": user.name
+            "name": user.name,
+            "role": user.role
         }
     }), 200
 
@@ -90,7 +92,8 @@ def signup():
         "user": {
             "id": new_user.id,
             "email": new_user.email,
-            "name": new_user.name
+            "name": new_user.name,
+            "role": new_user.role
         }
     }), 201
 
