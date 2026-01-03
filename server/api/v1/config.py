@@ -10,7 +10,6 @@ AUDIO_ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, '../../', 'media', 'audi
 
 class Config:
     TESTING = False
-    DEBUG = True
     JSONIFY_PRETTYPRINT_REGULAR = True
     HOST = '0.0.0.0'
     PORT = 5001
@@ -23,6 +22,7 @@ class TestingConfig(Config):
 
 
 class DevelopmentConfig(Config):
+    DEBUG = True
     SECRET_KEY = 'omawi_dev_pwd'
     TEMPLATES_AUTO_RELOAD = True
 
