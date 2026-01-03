@@ -3,12 +3,14 @@
 module app:
 Contains Flask API implementation
 """
+from api.v1.admin import app_admin
 from api.v1.auth import app_auth
 from api.v1.views import app_views
 from flask import Flask, jsonify
 from flask_cors import CORS, cross_origin
 from flask_login import LoginManager
 from models import storage
+from models.user import User
 import os
 
 
@@ -20,29 +22,27 @@ def create_app():
     config_type = os.getenv('CONFIG_TYPE', 'api.v1.config.DevelopmentConfig')
     app.config.from_object(config_type)
 
-    app.register_blueprint(app_auth)    # Auth-related routes
-    app.register_blueprint(app_views)
+    CORS(
+        app,
+        resources={r"/api/v1/*": {"origins": "http://localhost:5173"}},
+        supports_credentials=True,
+    )
 
     login_manager = LoginManager()
-    login_manager.login_view = 'app_auth.login'
     login_manager.init_app(app)
-
-    from models.user import User
 
     @login_manager.user_loader
     def load_user(user_id):
         return storage.get(User, user_id)
 
+    app.register_blueprint(app_auth)    # Auth-related routes
+    app.register_blueprint(app_views)
+    app.register_blueprint(app_admin)   # Admin-related routes
+
     return app
 
 
 app = create_app()
-CORS(
-    app,
-    resources={r"/api/v1/*": {"origins": "http://localhost:5173"}},
-    supports_credentials=True,
-)
-# cors = CORS(app)
 
 
 @app.teardown_appcontext
@@ -52,11 +52,17 @@ def close_session(error=None):
     storage.close()
 
 
-# @app.before_request
-# def authenticate():
-#     """ Authentication before each request
-#     """
-#     pass
+# Better implementation
+#
+# @app.errorhandler(Exception)
+# def handle_exception(e):
+#     if isinstance(e, HTTPException):
+#         # TO DO: integrate structured logging here
+#         return jsonify({"error": e.description}), e.code
+
+#     return jsonify({
+#         "error": "Internal Server Error. Try again later."
+#     }), 500
 
 
 @app.errorhandler(404)
@@ -80,9 +86,15 @@ def forbidden(error=None):
     return jsonify({'error': 'Forbidden'}), 403
 
 
+@app.errorhandler(Exception)
+def internal(error=None):
+    """ Internal Server Error handler - Returns 500 error
+    """
+    print(error)
+    return jsonify({'error': 'Internal Server Error. Try again later.'}), 500
+
+
 if __name__ == '__main__':
-    # host = os.getenv('OMAWI_API_HOST', '0.0.0.0')
-    # port = os.getenv('OMAWI_API_PORT', '5001')
     host = app.config['HOST']
     port = app.config['PORT']
-    app.run(host=host, port=port, threaded=True, debug=True)
+    app.run(host=host, port=port, threaded=True)
