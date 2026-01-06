@@ -5,6 +5,7 @@ Contains API endpoints related to song objects
 """
 from flask import abort, jsonify, request
 from sqlalchemy.exc import IntegrityError
+from api.v1 import admin_required
 from api.v1.views import app_views
 from models.melody import Melody
 from models.song import Song
@@ -32,6 +33,7 @@ def get_song(song_id):
 
 
 @app_views.route('/songs', methods=['POST'], strict_slashes=False)
+@admin_required
 def post_song():
     """ Creates and saves new song
     """

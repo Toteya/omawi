@@ -3,6 +3,7 @@
 module verses:
 Contains API endpoints relating to song verses
 """
+from api.v1 import admin_required
 from api.v1.views import app_views
 from flask import abort, jsonify, request
 from models import storage
@@ -24,6 +25,7 @@ def get_verse(verse_id):
 
 @app_views.route('/verses/<verse_id>', methods=['DELETE'],
                  strict_slashes=False)
+@admin_required
 def delete_verse(verse_id):
     """ Deletes the verse that matches the given ID
     """
@@ -52,6 +54,7 @@ def get_verses(song_id):
 
 @app_views.route('/songs/<song_id>/verses', methods=['POST'],
                  strict_slashes=False)
+@admin_required
 def post_verse(song_id):
     """ Creates a new verse and adds it to a song
     """

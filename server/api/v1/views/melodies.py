@@ -6,6 +6,7 @@ Contains API endpoints related to melody objects
 from flask import abort, jsonify, request, send_file
 from sqlalchemy.exc import IntegrityError
 import os
+from api.v1 import admin_required
 from api.v1.views import app_views
 from api.v1.config import AUDIO_ROOT_DIR
 from models import storage
@@ -50,6 +51,7 @@ def get_melody(melody_id):
 
 
 @app_views.route('/melodies', methods=['POST'], strict_slashes=False)
+@admin_required
 def post_melody():
     """ Creates and saves new melody object
     """
@@ -93,6 +95,7 @@ def get_song_melodies(song_id):
 
 @app_views.route('/songs/<song_id>/melodies/<melody_id>', methods=['PUT'],
                  strict_slashes=False)
+@admin_required
 def put_song_melodies(song_id, melody_id):
     """ Adds the given melody to the given song
     """

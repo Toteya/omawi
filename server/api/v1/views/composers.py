@@ -5,6 +5,7 @@ Contains API endpoints related to composer objects
 """
 from flask import abort, jsonify, request
 from sqlalchemy.exc import IntegrityError
+from api.v1 import admin_required
 from api.v1.views import app_views
 from models import storage
 from models.composer import Composer
@@ -29,6 +30,7 @@ def get_composer(composer_id):
     return jsonify(composer.to_dict())
 
 @app_views.route('/composers', methods=['POST'], strict_slashes=False)
+@admin_required
 def post_composer():
     """ Creates and saves a new composer object
     """

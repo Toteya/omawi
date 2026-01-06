@@ -2,6 +2,7 @@
 """
 API index endpoints
 """
+from api.v1 import admin_required
 from api.v1.views import app_views
 from flask import jsonify
 from models import storage
@@ -15,6 +16,7 @@ def status():
 
 
 @app_views.route('/stats', strict_slashes=False)
+@admin_required
 def stats():
     """ Returns statistics about all the existing objects in the daatabase
     """
