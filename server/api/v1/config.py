@@ -19,11 +19,12 @@ class Config:
 
 class TestingConfig(Config):
     TESTING = True
+    SECRET_KEY = 'omawi_test_key'
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SECRET_KEY = 'omawi_dev_pwd'
+    SECRET_KEY = 'omawi_dev_key'
     TEMPLATES_AUTO_RELOAD = True
 
 
