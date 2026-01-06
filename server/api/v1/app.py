@@ -3,15 +3,14 @@
 module app:
 Contains Flask API implementation
 """
-from api.v1.admin import app_admin
-from api.v1.auth import app_auth
-from api.v1.views import app_views
 from flask import Flask, jsonify
 from flask_cors import CORS, cross_origin
 from flask_login import LoginManager
+import os
+from api.v1.auth import app_auth
+from api.v1.views import app_views
 from models import storage
 from models.user import User
-import os
 
 
 def create_app():
@@ -37,7 +36,6 @@ def create_app():
 
     app.register_blueprint(app_auth)    # Auth-related routes
     app.register_blueprint(app_views)
-    app.register_blueprint(app_admin)   # Admin-related routes
 
     return app
 
@@ -50,19 +48,6 @@ def close_session(error=None):
     """ Closes/removes the database session
     """
     storage.close()
-
-
-# Better implementation
-#
-# @app.errorhandler(Exception)
-# def handle_exception(e):
-#     if isinstance(e, HTTPException):
-#         # TO DO: integrate structured logging here
-#         return jsonify({"error": e.description}), e.code
-
-#     return jsonify({
-#         "error": "Internal Server Error. Try again later."
-#     }), 500
 
 
 @app.errorhandler(404)
@@ -98,3 +83,16 @@ if __name__ == '__main__':
     host = app.config['HOST']
     port = app.config['PORT']
     app.run(host=host, port=port, threaded=True)
+
+
+# Better implementation
+#
+# @app.errorhandler(Exception)
+# def handle_exception(e):
+#     if isinstance(e, HTTPException):
+#         # TO DO: integrate structured logging here
+#         return jsonify({"error": e.description}), e.code
+
+#     return jsonify({
+#         "error": "Internal Server Error. Try again later."
+#     }), 500
