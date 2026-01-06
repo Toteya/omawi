@@ -3,7 +3,7 @@
 module test_verses:
 Contains pytests for API views - verses endpoints
 """
-from test_app import client
+from test_app import client, auth_client
 from test_songs import create_songs
 from models import storage
 from models.song import Song
@@ -57,12 +57,12 @@ def test_get_verses(client, create_songs, create_verses):
     assert '07e14b1f-7162' in verse_ids
     assert 'fa6e3dd3-f3cd' in verse_ids
 
-def test_post_verse(client, create_songs, create_verses):
+def test_post_verse(auth_client, create_songs, create_verses):
     """ Tests that the endpoint correctly creates a verse and adds it to
     the specified song
     """
     # Post verse to existing song -> SUCESS
-    response = client.post('/api/v1/songs/43870a5d-cbd0/verses',
+    response = auth_client.post('/api/v1/songs/43870a5d-cbd0/verses',
                            data={
                                'number': '1',
                                'lyrics': 'Lorem ipsum dolor sit amet.'
@@ -72,7 +72,7 @@ def test_post_verse(client, create_songs, create_verses):
     assert 'Lorem ipsum dolor sit amet.' in song.verses[0].lyrics
 
     # Post verse non-existing song -> 404 Error
-    response = client.post('/api/v1/songs/wrong_id/verses',
+    response = auth_client.post('/api/v1/songs/wrong_id/verses',
                            data={
                                'number': '1',
                                'lyrics': 'Lorem ipsum dolor sit amet.'
@@ -80,7 +80,7 @@ def test_post_verse(client, create_songs, create_verses):
     assert response.status_code == 404
 
     # Post verse with missing lyrics -> 400 Error
-    response = client.post('/api/v1/songs/43870a5d-cbd0/verses',
+    response = auth_client.post('/api/v1/songs/43870a5d-cbd0/verses',
                            data={
                                'number': '1',
                            })

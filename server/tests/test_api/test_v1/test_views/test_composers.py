@@ -3,7 +3,7 @@
 module test_composers:
 Contains pytests for API views - composers endpoints
 """
-from test_app import client
+from test_app import client, auth_client
 from models import storage
 from models.composer import Composer
 import pytest
@@ -43,21 +43,21 @@ def test_get_composer(client, create_composers):
     assert response.status_code == 404
 
 
-def test_post_composer(client, create_composers):
+def test_post_composer(auth_client, create_composers):
     """ Tests that the endpoint correctly creates a new composer object
     """
     # Post a composer with correct data -> SUCCESS
     data = {'name': 'Vivaldi'}
-    response = client.post('/api/v1/composers', data=data)
+    response = auth_client.post('/api/v1/composers', data=data)
     assert response.status_code == 201
     assert storage.get_by_filter(Composer, name='Vivaldi')
 
     # Post a composer missing a name -> 400 Error
     data = {'name': None}
-    response = client.post('/api/v1/composers', data=data)
+    response = auth_client.post('/api/v1/composers', data=data)
     assert response.status_code == 400
 
     # Post a composer that already exists -> 400
     data = {'name': 'Sibelius'}
-    response = client.post('/api/v1/composers', data=data)
+    response = auth_client.post('/api/v1/composers', data=data)
     assert response.status_code == 400

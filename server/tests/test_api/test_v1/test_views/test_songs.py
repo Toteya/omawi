@@ -3,7 +3,7 @@
 module test_songs:
 Contains pytests for API views - songs endpoints
 """
-from test_app import client
+from test_app import client, auth_client
 from test_composers import create_composers
 from models import storage
 from models.melody import Melody
@@ -42,28 +42,28 @@ def test_get_song(client, create_songs):
     assert response.json['number'] == 34
 
 
-def test_post_song(client, create_songs):
+def test_post_song(auth_client, create_songs):
     """ Test that the endpoint correctly adds a song to the DB
     """
     # Post song correctly with all details -> SUCCESS
     data = {'title': 'Song 81', 'number': 81}
-    response = client.post('/api/v1/songs', data=data)
+    response = auth_client.post('/api/v1/songs', data=data)
     assert response.status_code == 201
     assert storage.get_by_filter(Song, title='Song 81') is not None
 
     # Post a song with a missing title -> 404 Error
     data = {'number': 81}
-    response = client.post('/api/v1/songs', data=data)
+    response = auth_client.post('/api/v1/songs', data=data)
     assert response.status_code == 400
     
     # Post a song with invalid number -> 400 Error
     data = {'title': 'Little Song', 'number': 7.5}
-    response = client.post('/api/v1/songs', data=data)
+    response = auth_client.post('/api/v1/songs', data=data)
     assert response.status_code == 400
 
     # Post a song with a title that already exists -> 400 Error
     data = {'title': 'Song 34', 'number': 34}
-    response = client.post('/api/v1/songs', data=data)
+    response = auth_client.post('/api/v1/songs', data=data)
     assert response.status_code == 400
 
 

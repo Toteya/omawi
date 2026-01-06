@@ -7,7 +7,7 @@ from models import storage
 from models.composer import Composer
 from models.song import Song
 from models.user import User
-from test_app import client
+from test_app import client, auth_client
 import pytest
 import sys
 import os
@@ -41,11 +41,11 @@ def test_status(client):
     assert response.json == {'Status': 'OK'}
 
 
-def test_stats(client, create_objects):
+def test_stats(auth_client, create_objects):
     """ Test that the '/stats' route returns a summary of all existing objects
     """
-    response = client.get('/api/v1/stats')
+    response = auth_client.get('/api/v1/stats')
     assert response.status_code == 200
     assert response.json.get('Composers') == 2
     assert response.json.get('Songs') == 1
-    assert response.json.get('Users') == 2
+    assert response.json.get('Users') == 3

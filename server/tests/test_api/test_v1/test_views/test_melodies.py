@@ -4,7 +4,7 @@
 module test_melodies:
 Contains pytests for API views - melodies endpoints
 """
-from test_app import client
+from test_app import client, auth_client
 from test_composers import create_composers
 from test_songs import create_songs
 from models import storage
@@ -53,13 +53,13 @@ def test_get_melody(client, create_composers,  create_melodies):
     assert response.status_code == 404
 
 
-def test_post_melody(client, create_composers, create_melodies):
+def test_post_melody(auth_client, create_composers, create_melodies):
     """ Tests that the endpoint correctly creates a melody and adds it to
     the specified composer
     """
     # Post melody to existing composer -> SUCESS
     data = {'filepath': 'fav_tune.mp3', 'composer_id': 'a6458a37-8b17'}
-    response = client.post('/api/v1/melodies/', data=data)
+    response = auth_client.post('/api/v1/melodies/', data=data)
     assert response.status_code == 201
     composer = storage.get(Composer, 'a6458a37-8b17')
     melody_filepaths = [melody.filepath for melody in composer.melodies]
@@ -68,43 +68,43 @@ def test_post_melody(client, create_composers, create_melodies):
 
     # Post melody to without a composer [None] -> SUCESS
     data = {'filepath': 'magic_sound.m4a'}
-    response = client.post('/api/v1/melodies/', data=data)
+    response = auth_client.post('/api/v1/melodies/', data=data)
     assert response.status_code == 201
 
     # Post melody to without a composer [Empty string ''] -> SUCESS
     data = {'filepath': 'songbird.mp3', 'composer_id': ''}
-    response = client.post('/api/v1/melodies/', data=data)
+    response = auth_client.post('/api/v1/melodies/', data=data)
     assert response.status_code == 201
 
     # Post melody non-existing composer -> 400 Error
     data = {'filepath': 'a_new_star.m4a', 'composer_id': 'non-existent_id'}
-    response = client.post('/api/v1/melodies', data=data)
+    response = auth_client.post('/api/v1/melodies', data=data)
     assert response.status_code == 400
 
     # Post verse with missing filepath [None] -> 400 Error
     data = {'filepath': None, 'composer_id': 'a6458a37-8b17'}
-    response = client.post('/api/v1/melodies', data=data)
+    response = auth_client.post('/api/v1/melodies', data=data)
     assert response.status_code == 400
 
     # Post verse with missing filepath [Empty string ''] -> 400 Error
     data = {'filepath': '', 'composer_id': 'a6458a37-8b17'}
-    response = client.post('/api/v1/melodies', data=data)
+    response = auth_client.post('/api/v1/melodies', data=data)
     assert response.status_code == 400
     
 
     # Post verse with filepath that already exists -> 400 Error
     data = {'filepath': 'sweet_melody.m4a'}
-    response = client.post('/api/v1/melodies', data=data)
+    response = auth_client.post('/api/v1/melodies', data=data)
     assert response.status_code == 400
 
 
-def test_put_song_melodies(client, create_songs, create_melodies):
+def test_put_song_melodies(auth_client, create_songs, create_melodies):
     """ Tests that the endpoint correctly adds a melody to a song
     """
     # POST existing song and existing melody -> SUCCESS
     song_id = '93016e68-8e7e'
     melody_id = 'df7943f3-2759'
-    response = client.put(f'/api/v1/songs/{song_id}/melodies/{melody_id}')
+    response = auth_client.put(f'/api/v1/songs/{song_id}/melodies/{melody_id}')
     assert response.status_code == 200
     song = storage.get(Song, song_id)
     melody_filepaths = [melody.filepath for melody in song.melodies]
