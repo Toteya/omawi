@@ -44,6 +44,7 @@ def post_user():
     email = data.get('email')
     name = data.get('name')
     password = data.get('password')
+    role = data.get('role', 'user')
     if not email or not name or not password:
         abort(400, description="Email, name, and password are required.")
     # if not validators.email(email):
@@ -54,8 +55,10 @@ def post_user():
     if user:
         abort(409, description="User already exists.")
 
-    new_user = User(email=email, name=name,
-                    password=generate_password_hash(password, method='scrypt'))
+    new_user = User(name=name,
+                    email=email,
+                    password=generate_password_hash(password, method='scrypt'),
+                    role=role)
     storage.new(new_user)
     storage.save()
 
