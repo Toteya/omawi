@@ -33,7 +33,10 @@ export function AuthProvider({ children }) {
       body: JSON.stringify({ email, password, remember }),
       credentials: 'include',
     })
-    if (!res.ok) throw new Error('Login failed')
+    if (!res.ok) {
+      const text = await res.text().catch(() => '')
+      throw new Error(`Login failed: ${res.status} ${text}`)
+    }
     await checkSession()
   }
 

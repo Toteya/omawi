@@ -2,22 +2,24 @@ import { useAuth } from "../context/AuthContext"
 import { useState } from "react"
 
 export default function Login() {
-  const [loginFailed, setLoginFailed] = useState(false);
+  const [invalidCredentials, setInvalidCredentials] = useState(false);
   const { login } = useAuth()
+  
   async function handleSubmit(e) {
     e.preventDefault()
     const form = new FormData(e.target)
-
+    setInvalidCredentials(false)
     await login(
       form.get("email"),
       form.get("password"),
       form.get("remember") === "on",
     ).then(() => {
       navigation.navigate("/")
-    }).catch(() => {
-      setLoginFailed(true)
+    }).catch((e) => {
+      if (e.message.includes("401")) setInvalidCredentials(true)
     })
   }
+  
   return (
     <div className="Page">
       <h1 className="mb-4">Login</h1>
@@ -37,7 +39,7 @@ export default function Login() {
           placeholder="password"
           required
         />
-        {loginFailed && (<p className="text-red-500 text-sm">Invalid login credentials</p>)}
+        {invalidCredentials && (<p className="text-red-500 text-sm">Invalid login credentials</p>)}
         <div className="mt-2">
           <input
             className="inline-flex mr-2"
