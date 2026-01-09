@@ -23,6 +23,9 @@ export default function Navbar() {
                 <GrUser className="inline ml-1 mb-1" size={20} />
               )}
             </NavLink>
+            {user.role === 'admin' && (
+              <NavLink to="/admin">Admin</NavLink>
+            )}
             <NavLink to="/" onClick={logout}>Logout</NavLink>
           </>
         )}

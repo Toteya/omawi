@@ -5,17 +5,21 @@ import Profile from './pages/Profile.jsx'
 import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
 import About from './pages/About.jsx'
+import Admin from './pages/Admin.jsx'
 import Navbar from './components/Navbar.jsx'
 import PageWrapper from './layouts/PageWrapper.jsx'
 import './App.css'
 
-function ProtectedRoute({ children }) {
-  const { status } = useAuth()
+function ProtectedRoute({ children, requireAdmin = false }) {
+  const { status, user } = useAuth()
   if (status === 'loading') {
     return <div>Loading...</div>
   }
   if (status === 'unauthenticated') {
     return <Navigate to='/login' />
+  }
+  if (requireAdmin && user?.role !== 'admin') {
+    return <Navigate to='/' />
   }
   return children
 }
@@ -34,6 +38,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <Admin />
                 </ProtectedRoute>
               }
             />
